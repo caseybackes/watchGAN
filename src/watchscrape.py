@@ -38,7 +38,7 @@ data_dir = '../data/webpages'
 referenced_images = []
 alt_text_list = []
 # 1. for each html document in the data_dir, get all references to img src paths that start with './Amazon', and get rid of urls, and keep the alt text
-for fileobject in os.listdir(data_dir)[0:4]:
+for fileobject in os.listdir(data_dir):
     if os.path.isfile(os.path.join(data_dir, fileobject)):
         if fileobject != ".DS_Store":
             print(f'{fileobject} is a document')
@@ -60,13 +60,13 @@ for fileobject in os.listdir(data_dir)[0:4]:
 
 # for all directories in data_dir, extract the names of the referenced images only and delete all other files
 
-for fileobject in os.listdir(data_dir)[0:-1]:
+for fileobject in os.listdir(data_dir):
     full_dir_path = os.path.join(data_dir, fileobject)
     if os.path.isdir(full_dir_path):
         for file in os.listdir(full_dir_path):
             full_file_path = os.path.join(full_dir_path,file)
             if file[-4::] != '.jpg':
-                print('I want to delete ', file)
+                print('Deleting File: ', file)
                 os.remove(full_file_path)
 
 
