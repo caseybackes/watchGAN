@@ -9,6 +9,9 @@ import numpy as np
 class WatchScrape():
     def __init__(self):
         self.data_dir = '../data/webpages'
+        self.is_cleaned = False
+        self.referenced_images=None
+        self.html = []
   
     def file2html(self, FILENAME):
         '''given a filename, return the BS4 object for the html file'''
@@ -16,8 +19,6 @@ class WatchScrape():
             html = BeautifulSoup(f, 'html.parser')
             f.close()
         return html
-
-
 
     def collect(self):
         referenced_images = []
@@ -28,7 +29,8 @@ class WatchScrape():
             if os.path.isfile(os.path.join(self.data_dir, fileobject)):
                 if fileobject != ".DS_Store":
                     print(f'Scraping Document: {fileobject}')
-                    html = file2html(os.path.join(self.data_dir, fileobject))
+                    html = self.file2html(os.path.join(self.data_dir, fileobject))
+                    self.html.append(html)
                     imgs = html.findAll('img')
                     src_list = []
                     for img in imgs:
@@ -41,39 +43,43 @@ class WatchScrape():
                                 referenced_images.append((src,alt))
                         except KeyError as e:
                             continue
-
         self.referenced_images = referenced_images
 
+    def clean(self):
+        ''' 
+        This method deletes the non-jpg files in the 'webpages' directory. Then moves the 
+        appropriate image files to the aggregate 'images' directory. 
 
-        def clean(self):
-            # Transform referened_images list into array for indexing
-            referenced_images = np.array(self.referenced_images)
+        '''
+        # Transform referened_images list into array for indexing
+        referenced_images = np.array(self.referenced_images)
+        # 2. for all directories in data_dir, extract the names of the referenced images only and delete all other files
+        for fileobject in os.listdir(self.data_dir):
+            full_dir_path = os.path.join(self.data_dir, fileobject)
+            if os.path.isdir(full_dir_path):
+                for file in os.listdir(full_dir_path):
+                    full_file_path = os.path.join(full_dir_path,file)
 
-            # 2. for all directories in data_dir, extract the names of the referenced images only and delete all other files
-
-            for fileobject in os.listdir(self.data_dir):
-                full_dir_path = os.path.join(self.data_dir, fileobject)
-                if os.path.isdir(full_dir_path):
-                    for file in os.listdir(full_dir_path):
-                        full_file_path = os.path.join(full_dir_path,file)
-
-                        # REMOVE THE NON JPG (TARGET) IMAGE FILES
-                        if file[-4::] != '.jpg':
-                            print('Deleting File: ', file)
+                    # REMOVE THE NON JPG IMAGE FILES
+                    if file[-4::] != '.jpg':
+                        print('Deleting File: ', file)
+                        try:
                             os.remove(full_file_path)
+                        except FileNotFoundError as e:
+                            continue # whatever. At least we tried to get rid of it. 
 
-                        # MOVE THE TARGET FILES TO THE HOLISTIC IMAGE DIRECTORY
-                        src = full_dir_path #"C:\\Users\\****\\Desktop\\test1\\"
-                        dst = '../data/images/'#"C:\\Users\\****\\Desktop\\test2\\"
+                    # MOVE THE TARGET FILES TO THE AGGREGATE IMAGE DIRECTORY
+                    src = full_dir_path #"C:\\Users\\****\\Desktop\\test1\\"
+                    dst = '../data/images/'#"C:\\Users\\****\\Desktop\\test2\\"
 
-                        files = [i for i in os.listdir(src) if i in [os.path.basename(j) for j in referenced_images[:,0] ] ]
-                        for f in files:
-                            try:
-                                shutil.move(path.join(src, f), dst)
-                            except:
-                                print("already moved this file, continuing...")
-                                continue 
-            self.cleaned=True
+                    files = [i for i in os.listdir(src) if i in [os.path.basename(j) for j in referenced_images[:,0] ] ]
+                    for f in files:
+                        try:
+                            shutil.move(path.join(src, f), dst)
+                        except:
+                            #print(f"{f} already moved, continuing...")
+                            continue 
+        self.is_cleaned=True
 
 if __name__ == "__main__":
     
