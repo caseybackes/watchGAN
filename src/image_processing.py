@@ -4,7 +4,7 @@ import skimage.util
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
 
-def im_resize(FILEPATH,SIZE,show=False,save=False):
+def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
     desired_size = SIZE
     im_pth = FILEPATH#"/home/jdhao/test.jpg"
 
@@ -28,7 +28,9 @@ def im_resize(FILEPATH,SIZE,show=False,save=False):
 
     if show:
         new_im.show()
-    if save:
+    if make_copy:
+        FILEPATH = FILEPATH.replace('.jpg',' (copy).jpg')
+
         new_im.save(FILEPATH)
     return new_im
 
@@ -36,5 +38,5 @@ if __name__ == "__main__":
     
     f = "../data/images/Anne Klein Women's AK-1492MPRG Swarovski Crystal Accented Rose Gold-Tone Bracelet Watch.jpg"
 
-    img = im_resize(f,200,show=True,save=True)
+    img = im_resize(f,200,show=True,make_copy=True)
 
