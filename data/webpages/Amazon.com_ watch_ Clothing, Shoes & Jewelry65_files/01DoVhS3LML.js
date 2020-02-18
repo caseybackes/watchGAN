@@ -1,0 +1,2 @@
+(function(c){var b=window.AmazonUIPageJS||window.P,d=b._namespace||b.attributeErrors,a=d?d("SearchShoppingPageAssets",""):b;a.guardFatal?a.guardFatal(c)(a,window):a.execute(function(){c(a,window)})})(function(c,b,d){c.when("rush-framework","s-web-application-controller","s-component-utils").register("s-shopping-page-navigation",function(a,c,b){var d=c.ACTIONS;a.registerComponent("s-shopping-page-navigation","s-shopping-page-navigation",function(a){a.on(d.LOAD_SEARCH_PAGE,b.remove(a));a.on(d.SHOPPING_PAGE_NAVIGATION_READY,
+b.append(a))})})});
