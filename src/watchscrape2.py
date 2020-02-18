@@ -8,8 +8,8 @@ import pandas as pd
 
 class WatchScrape():
     def __init__(self):
-        self.data_dir = '../data/webpages2/'
-        self.image_dir = '../data/images2/'
+        self.data_dir = '../data/webpages/'
+        self.image_dir = '../data/images/'
 
     def collect(self):
         for f in os.listdir(self.data_dir):
