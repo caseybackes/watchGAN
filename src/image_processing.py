@@ -3,6 +3,8 @@ from skimage import io
 import skimage.util
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
+import os
+
 
 def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
     desired_size = SIZE
@@ -29,14 +31,18 @@ def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
     if show:
         new_im.show()
     if make_copy:
-        FILEPATH = FILEPATH.replace('.jpg',' (copy).jpg')
-
+        # FILEPATH = FILEPATH.replace('.jpg',' (processed).jpg')
+        FILEPATH = '../data/train/processed_images/'+os.path.basename(FILEPATH)
         new_im.save(FILEPATH)
     return new_im
 
 if __name__ == "__main__":
     
-    f = "../data/images/Anne Klein Women's AK-1492MPRG Swarovski Crystal Accented Rose Gold-Tone Bracelet Watch.jpg"
-
-    img = im_resize(f,200,show=True,make_copy=True)
+    #f = "../data/images/Anne Klein Women's AK-1492MPRG Swarovski Crystal Accented Rose Gold-Tone Bracelet Watch.jpg"
+    
+    
+    image_dir = '../data/images/'
+    for imgpath in os.listdir(image_dir):
+        img = im_resize(image_dir + imgpath,128,show=False,make_copy=True)
+    print('Resized and sqared the images were added to the data/process_images directory.')
 
