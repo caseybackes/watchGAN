@@ -3,11 +3,7 @@ from skimage import io
 import skimage.util
 import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
-<<<<<<< HEAD
 import os
-
-=======
->>>>>>> master
 
 def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
     desired_size = SIZE
