@@ -45,5 +45,6 @@ if __name__ == "__main__":
     
     image_dir = '../data/images/'
     for imgpath in os.listdir(image_dir):
-        img = im_resize(image_dir + imgpath,128,show=False,make_copy=True)
-    print('Resized and sqared the images were added to the data/process_images directory.')
+        if imgpath != '.DS_Store':
+            img = im_resize(image_dir + imgpath,128,show=False,make_copy=True)
+            print('Resized and sqared the images were added to the data/process_images directory.')
