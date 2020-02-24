@@ -67,6 +67,7 @@ vae = VariationalAutoencoder(
 
 if mode == 'build':
     vae.save('../data/savedmodels/')
+    vae.save('run/vae/'+str(run_id + '_watches'))
 else:
     vae.load_weights(os.path.join(RUN_FOLDER, 'weights/weights.h5'))
 

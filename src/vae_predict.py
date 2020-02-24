@@ -56,4 +56,5 @@ for i in range(n_to_show):
     ax.imshow(reconst[i, :,:,:])
     ax.axis('off')
 
-plt.show()
+name=run_id+'_watches'
+fig.savefig(name, dpi=125)
