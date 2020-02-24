@@ -11,7 +11,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 # ITERATION PARAMETERS
 section = 'vae'
-run_id = '0001'
+run_id = '0003'
 data_name = 'watches'
 RUN_FOLDER = 'run/{}/'.format(section)
 RUN_FOLDER += '_'.join([run_id, data_name])
@@ -74,7 +74,7 @@ else:
 
 LEARNING_RATE = 0.0005
 R_LOSS_FACTOR = 10000
-EPOCHS = 200
+EPOCHS = 1000
 PRINT_EVERY_N_BATCHES = 10
 INITIAL_EPOCH = 0
 

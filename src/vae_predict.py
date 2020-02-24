@@ -10,7 +10,7 @@ from utils.loaders import load_model, ImageLabelLoader
 
 # run params
 section = 'vae'
-run_id = '0001'
+run_id = '0003'
 data_name = 'watches'
 RUN_FOLDER = 'run/{}/'.format(section)
 RUN_FOLDER += '_'.join([run_id, data_name])
@@ -25,7 +25,20 @@ INPUT_DIM = (128,128,3)
 #imageLoader = ImageLabelLoader(IMAGE_FOLDER, INPUT_DIM[:2])
 
 
-vae = load_model(VariationalAutoencoder, RUN_FOLDER)
+#vae = load_model(VariationalAutoencoder, RUN_FOLDER)
+vae = VariationalAutoencoder(
+                input_dim = INPUT_DIM
+                , encoder_conv_filters=[32,64,64, 64]
+                , encoder_conv_kernel_size=[3,3,3,3]
+                , encoder_conv_strides=[2,2,2,2]
+
+                , decoder_conv_t_filters=[64,64,32,3]
+                , decoder_conv_t_kernel_size=[3,3,3,3]
+                , decoder_conv_t_strides=[2,2,2,2]
+                , z_dim=200
+                , use_batch_norm=True
+                , use_dropout=True)
+
 
 n_to_show = 30
 
@@ -40,4 +53,5 @@ for i in range(n_to_show):
     ax.imshow(reconst[i, :,:,:])
     ax.axis('off')
 
-plt.show()
+name = 'predictions-' + run_id+'-watches.png'
+fig.savefig(name, dpi=125)
