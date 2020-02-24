@@ -32,7 +32,7 @@ def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
     if make_copy:
 
         # FILEPATH = FILEPATH.replace('.jpg',' (processed).jpg')
-        FILEPATH = '../data/train/processed_images/'+os.path.basename(FILEPATH)
+        FILEPATH = '../../data/train/processed_images/'+os.path.basename(FILEPATH)
 
         new_im.save(FILEPATH)
     return new_im
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     #f = "../data/images/Anne Klein Women's AK-1492MPRG Swarovski Crystal Accented Rose Gold-Tone Bracelet Watch.jpg"
     
     
-    image_dir = '../data/images/'
+    image_dir = '../../data/images/'
     for imgpath in os.listdir(image_dir):
         if imgpath != '.DS_Store':
             img = im_resize(image_dir + imgpath,128,show=False,make_copy=True)

@@ -8,11 +8,12 @@ import pandas as pd
 
 class WatchScrape():
     def __init__(self):
-        self.data_dir = '../data/webpages/'
-        self.image_dir = '../data/images/'
+        self.data_dir = '../../data/webpages/'
+        self.image_dir = '../../data/images/'
 
     def collect(self):
         for f in os.listdir(self.data_dir):
+            print('f')
             fpath = os.path.join(self.data_dir,f)
             if os.path.isfile(fpath):
                 with open(fpath,'r') as fopen:
@@ -26,7 +27,8 @@ class WatchScrape():
                     try:
                         shutil.move(f'{self.data_dir}{src}', f"{self.image_dir}{alt}.jpg")
                     except FileNotFoundError as fnf:
-                        print(img, ' moved already')
+                        continue
+                        #print(img, ' moved already')
         for f in os.listdir(self.data_dir):
             fpath = os.path.join(self.data_dir,f)
             if os.path.isdir(fpath):
@@ -34,10 +36,4 @@ class WatchScrape():
 
 ws = WatchScrape()
 ws.collect()
-
-    # - - - Extract the names of the relevant images from the data/webpages2 directory
-    
-    # - - - Move the relevant file to the data/images2 directory with rename to alt_txt
-
-    # - - - Delete the irrelevant data directory and keep the html file
 

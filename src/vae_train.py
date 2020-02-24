@@ -2,7 +2,7 @@ import os
 from glob import glob
 import numpy as np
 
-from VAE_MODEL import VariationalAutoencoder
+from vae.VAE_MODEL import VariationalAutoencoder
 from keras.preprocessing.image import ImageDataGenerator
 
 
@@ -11,10 +11,13 @@ from keras.preprocessing.image import ImageDataGenerator
 
 # ITERATION PARAMETERS
 section = 'vae'
-run_id = '0001'
+run_id = '0003'
 data_name = 'watches'
 RUN_FOLDER = 'run/{}/'.format(section)
 RUN_FOLDER += '_'.join([run_id, data_name])
+
+
+
 
 if not os.path.exists(RUN_FOLDER):
     os.mkdir(RUN_FOLDER)
@@ -25,7 +28,7 @@ if not os.path.exists(RUN_FOLDER):
 mode =  'build' #'load' #
 
 
-DATA_FOLDER = '../data/train' #containes the class dir of 'processed_images'
+DATA_FOLDER = '../data/train' #contains the class dir of 'processed_images'
 
 
 INPUT_DIM = (128,128,3)
@@ -54,8 +57,7 @@ vae = VariationalAutoencoder(
                 , encoder_conv_filters=[32,64,64, 64]
                 , encoder_conv_kernel_size=[3,3,3,3]
                 , encoder_conv_strides=[2,2,2,2]
-                # comment 
-    
+
                 , decoder_conv_t_filters=[64,64,32,3]
                 , decoder_conv_t_kernel_size=[3,3,3,3]
                 , decoder_conv_t_strides=[2,2,2,2]
