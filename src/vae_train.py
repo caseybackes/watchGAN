@@ -54,13 +54,13 @@ data_flow = data_gen.flow_from_directory(DATA_FOLDER
 
 vae = VariationalAutoencoder(
                 input_dim = INPUT_DIM
-                , encoder_conv_filters=[32,64,64, 64]
-                , encoder_conv_kernel_size=[3,3,3,3]
-                , encoder_conv_strides=[2,2,2,2]
+                , encoder_conv_filters=[32,64,64,64,128,128]
+                , encoder_conv_kernel_size=[3,3,3,3,3, 3]
+                , encoder_conv_strides=[2,2,2,2,2, 2]
 
-                , decoder_conv_t_filters=[64,64,32,3]
-                , decoder_conv_t_kernel_size=[3,3,3,3]
-                , decoder_conv_t_strides=[2,2,2,2]
+                , decoder_conv_t_filters=[64,64,32,3,3, 3]
+                , decoder_conv_t_kernel_size=[3,3,3,3, 3, 3]
+                , decoder_conv_t_strides=[2,2,2,2, 2, 2]
                 , z_dim=200
                 , use_batch_norm=True
                 , use_dropout=True)
@@ -70,8 +70,8 @@ if mode == 'build':
 else:
     vae.load_weights(os.path.join(RUN_FOLDER, 'weights/weights.h5'))
 
-# vae.encoder.summary()
-# vae.decoder.summary()
+vae.encoder.summary()
+vae.decoder.summary()
 
 
 LEARNING_RATE = 0.0005
