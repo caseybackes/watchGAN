@@ -11,7 +11,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 # ITERATION PARAMETERS
 section = 'vae'
-run_id = '0003'
+run_id = '0004'
 data_name = 'watches'
 RUN_FOLDER = 'run/{}/'.format(section)
 RUN_FOLDER += '_'.join([run_id, data_name])

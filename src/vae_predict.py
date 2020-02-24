@@ -10,7 +10,7 @@ from utils.loaders import load_model, ImageLabelLoader
 
 # run params
 section = 'vae'
-run_id = '0001'
+run_id = '0004'
 data_name = 'watches'
 RUN_FOLDER = 'run/{}/'.format(section)
 RUN_FOLDER += '_'.join([run_id, data_name])
@@ -24,18 +24,21 @@ INPUT_DIM = (128,128,3)
 
 #imageLoader = ImageLabelLoader(IMAGE_FOLDER, INPUT_DIM[:2])
 
+
 vae = VariationalAutoencoder(
                 input_dim = INPUT_DIM
-                , encoder_conv_filters=[32,64,64, 64]
-                , encoder_conv_kernel_size=[3,3,3,3]
-                , encoder_conv_strides=[2,2,2,2]
-                , decoder_conv_t_filters=[64,64,32,3]
-                , decoder_conv_t_kernel_size=[3,3,3,3]
-                , decoder_conv_t_strides=[2,2,2,2]
+                , encoder_conv_filters=[32,64,64,64,128,128]
+                , encoder_conv_kernel_size=[3,3,3,3,3, 3]
+                , encoder_conv_strides=[2,2,2,2,2, 2]
+
+                , decoder_conv_t_filters=[64,64,32,3,3, 3]
+                , decoder_conv_t_kernel_size=[3,3,3,3, 3, 3]
+                , decoder_conv_t_strides=[2,2,2,2, 2, 2]
                 , z_dim=200
                 , use_batch_norm=True
                 , use_dropout=True)
-vae.load_weights('run/vae/0001_watches/weights/weights.h5')  
+
+vae.load_weights('run/vae/0004_watches/weights/weights.h5')  
 
 
 # vae = load_model(VariationalAutoencoder, RUN_FOLDER)
