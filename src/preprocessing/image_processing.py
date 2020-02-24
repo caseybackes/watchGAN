@@ -37,11 +37,7 @@ def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
         new_im.save(FILEPATH)
     return new_im
 
-if __name__ == "__main__":
-    
-
-    #f = "../data/images/Anne Klein Women's AK-1492MPRG Swarovski Crystal Accented Rose Gold-Tone Bracelet Watch.jpg"
-    
+if __name__ == "__main__":    
     
     image_dir = '../../data/images/'
     for imgpath in os.listdir(image_dir):
