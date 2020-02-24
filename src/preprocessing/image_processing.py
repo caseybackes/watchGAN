@@ -25,7 +25,11 @@ def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
     delta_w = desired_size - new_size[0]
     delta_h = desired_size - new_size[1]
     padding = (delta_w//2, delta_h//2, delta_w-(delta_w//2), delta_h-(delta_h//2))
-    new_im = ImageOps.expand(im, padding, fill=(255,255,255))
+    try:
+        new_im = ImageOps.expand(im, padding, fill=(255,255,255))
+    except TypeError as te:
+        print(te)
+        return None 
 
     if show:
         new_im.show()
@@ -43,4 +47,5 @@ if __name__ == "__main__":
     for imgpath in os.listdir(image_dir):
         if imgpath != '.DS_Store':
             img = im_resize(image_dir + imgpath,128,show=False,make_copy=True)
-            print('Resized and sqared the images were added to the data/process_images directory.')
+    
+    print('Resized and sqared the images were added to the data/process_images directory.')
