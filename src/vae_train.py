@@ -11,11 +11,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 # ITERATION PARAMETERS
 section = 'vae'
-<<<<<<< HEAD
-run_id = '0005'
-=======
-run_id = '0003'
->>>>>>> 2ac4a047b38ef3dc7afd6a9e6b29aad1f156043d
+run_id = '0006'
 data_name = 'watches'
 RUN_FOLDER = 'run/{}/'.format(section)
 RUN_FOLDER += '_'.join([run_id, data_name])
@@ -44,12 +40,12 @@ NUM_IMAGES = len(filenames)
 
 noise_maker = lambda x: x + np.random.uniform(size=(INPUT_DIM))
 
-data_gen = ImageDataGenerator(rescale=1./255
-                                , rotation_range=4
-                                , width_shift_range=.1
-                                , height_shift_range=.1
-                                , horizontal_flip=True,
-                                preprocessing_function= noise_maker)
+data_gen = ImageDataGenerator(rescale=1./255)
+                                # , rotation_range=4
+                                # , width_shift_range=.1
+                                # , height_shift_range=.1
+                                # , horizontal_flip=True,
+                                # preprocessing_function= noise_maker)
 
 data_flow = data_gen.flow_from_directory(DATA_FOLDER
                                          , target_size = INPUT_DIM[:2]
@@ -85,13 +81,8 @@ else:
 
 
 LEARNING_RATE = 0.0005
-<<<<<<< HEAD
-R_LOSS_FACTOR = 2000#5000#10000
-EPOCHS = 400
-=======
 R_LOSS_FACTOR = 10000
 EPOCHS = 1000
->>>>>>> 2ac4a047b38ef3dc7afd6a9e6b29aad1f156043d
 PRINT_EVERY_N_BATCHES = 10
 INITIAL_EPOCH = 0
 
