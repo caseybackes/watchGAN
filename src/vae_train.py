@@ -2,7 +2,7 @@ import os
 from glob import glob
 import numpy as np
 
-from VAE_MODEL import VariationalAutoencoder
+from vae.VAE_MODEL import VariationalAutoencoder
 from keras.preprocessing.image import ImageDataGenerator
 
 
@@ -11,10 +11,13 @@ from keras.preprocessing.image import ImageDataGenerator
 
 # ITERATION PARAMETERS
 section = 'vae'
-run_id = '0001'
+run_id = '0005'
 data_name = 'watches'
 RUN_FOLDER = 'run/{}/'.format(section)
 RUN_FOLDER += '_'.join([run_id, data_name])
+
+
+
 
 if not os.path.exists(RUN_FOLDER):
     os.mkdir(RUN_FOLDER)
@@ -25,7 +28,7 @@ if not os.path.exists(RUN_FOLDER):
 mode =  'build' #'load' #
 
 
-DATA_FOLDER = '../data/train' #containes the class dir of 'processed_images'
+DATA_FOLDER = '../data/train' #contains the class dir of 'processed_images'
 
 
 INPUT_DIM = (128,128,3)
@@ -35,7 +38,11 @@ filenames = np.array(glob(os.path.join(DATA_FOLDER, '*/*.jpg')))
 
 NUM_IMAGES = len(filenames)
 
-data_gen = ImageDataGenerator(rescale=1./255)
+data_gen = ImageDataGenerator(rescale=1./255
+                                , rotation_range=4
+                                , width_shift_range=.1
+                                , height_shift_range=.1
+                                , horizontal_flip=True,)
 
 data_flow = data_gen.flow_from_directory(DATA_FOLDER
                                          , target_size = INPUT_DIM[:2]
@@ -48,33 +55,31 @@ data_flow = data_gen.flow_from_directory(DATA_FOLDER
 
 
 
-
 vae = VariationalAutoencoder(
                 input_dim = INPUT_DIM
-                , encoder_conv_filters=[32,64,64, 64]
-                , encoder_conv_kernel_size=[3,3,3,3]
-                , encoder_conv_strides=[2,2,2,2]
-                # comment 
-    
-                , decoder_conv_t_filters=[64,64,32,3]
-                , decoder_conv_t_kernel_size=[3,3,3,3]
-                , decoder_conv_t_strides=[2,2,2,2]
+                , encoder_conv_filters=[32,64,64,64,128,128]
+                , encoder_conv_kernel_size=[3,3,3,3,3, 3]
+                , encoder_conv_strides=[2,2,2,2,2, 2]
+                , decoder_conv_t_filters=[64,64,32,3,3, 3]
+                , decoder_conv_t_kernel_size=[3,3,3,3, 3, 3]
+                , decoder_conv_t_strides=[2,2,2,2, 2, 2]
                 , z_dim=200
                 , use_batch_norm=True
                 , use_dropout=True)
 
 if mode == 'build':
     vae.save('../data/savedmodels/')
+    vae.save('run/vae/'+str(run_id + '_watches'))
 else:
     vae.load_weights(os.path.join(RUN_FOLDER, 'weights/weights.h5'))
 
-# vae.encoder.summary()
-# vae.decoder.summary()
+vae.encoder.summary()
+vae.decoder.summary()
 
 
 LEARNING_RATE = 0.0005
 R_LOSS_FACTOR = 10000
-EPOCHS = 200
+EPOCHS = 400
 PRINT_EVERY_N_BATCHES = 10
 INITIAL_EPOCH = 0
 
