@@ -28,7 +28,7 @@ def vae_predict(n_predictions):
                     , use_batch_norm=True
                     , use_dropout=True)
 
-    vae.load_weights('run/vae/0004_watches/weights/weights.h5')
+    vae.load_weights('run/vae/0005_watches/weights/weights.h5')
     znew = np.random.normal(size = (n_predictions,vae.z_dim))
     reconst = vae.decoder.predict(np.array(znew))
     return reconst

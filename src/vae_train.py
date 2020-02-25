@@ -38,11 +38,14 @@ filenames = np.array(glob(os.path.join(DATA_FOLDER, '*/*.jpg')))
 
 NUM_IMAGES = len(filenames)
 
+noise_maker = lambda x: x + np.random.uniform(size=(INPUT_DIM))
+
 data_gen = ImageDataGenerator(rescale=1./255
                                 , rotation_range=4
                                 , width_shift_range=.1
                                 , height_shift_range=.1
-                                , horizontal_flip=True,)
+                                , horizontal_flip=True,
+                                preprocessing_function= noise_maker)
 
 data_flow = data_gen.flow_from_directory(DATA_FOLDER
                                          , target_size = INPUT_DIM[:2]
@@ -73,12 +76,12 @@ if mode == 'build':
 else:
     vae.load_weights(os.path.join(RUN_FOLDER, 'weights/weights.h5'))
 
-vae.encoder.summary()
-vae.decoder.summary()
+# vae.encoder.summary()
+# vae.decoder.summary()
 
 
 LEARNING_RATE = 0.0005
-R_LOSS_FACTOR = 10000
+R_LOSS_FACTOR = 2000#5000#10000
 EPOCHS = 400
 PRINT_EVERY_N_BATCHES = 10
 INITIAL_EPOCH = 0
