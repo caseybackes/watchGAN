@@ -11,7 +11,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 # ITERATION PARAMETERS
 section = 'vae'
-run_id = '0004'
+run_id = '0005'
 data_name = 'watches'
 RUN_FOLDER = 'run/{}/'.format(section)
 RUN_FOLDER += '_'.join([run_id, data_name])
@@ -38,7 +38,11 @@ filenames = np.array(glob(os.path.join(DATA_FOLDER, '*/*.jpg')))
 
 NUM_IMAGES = len(filenames)
 
-data_gen = ImageDataGenerator(rescale=1./255)
+data_gen = ImageDataGenerator(rescale=1./255
+                                , rotation_range=4
+                                , width_shift_range=.1
+                                , height_shift_range=.1
+                                , horizontal_flip=True,)
 
 data_flow = data_gen.flow_from_directory(DATA_FOLDER
                                          , target_size = INPUT_DIM[:2]
@@ -51,13 +55,11 @@ data_flow = data_gen.flow_from_directory(DATA_FOLDER
 
 
 
-
 vae = VariationalAutoencoder(
                 input_dim = INPUT_DIM
                 , encoder_conv_filters=[32,64,64,64,128,128]
                 , encoder_conv_kernel_size=[3,3,3,3,3, 3]
                 , encoder_conv_strides=[2,2,2,2,2, 2]
-
                 , decoder_conv_t_filters=[64,64,32,3,3, 3]
                 , decoder_conv_t_kernel_size=[3,3,3,3, 3, 3]
                 , decoder_conv_t_strides=[2,2,2,2, 2, 2]
@@ -77,7 +79,7 @@ vae.decoder.summary()
 
 LEARNING_RATE = 0.0005
 R_LOSS_FACTOR = 10000
-EPOCHS = 10000
+EPOCHS = 400
 PRINT_EVERY_N_BATCHES = 10
 INITIAL_EPOCH = 0
 

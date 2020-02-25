@@ -4,57 +4,54 @@ import numpy as np
 import os
 from scipy.stats import norm
 import pandas as pd
-
+import argparse 
 from vae.VAE_MODEL import VariationalAutoencoder
 from utils.loaders import load_model, ImageLabelLoader
-
-# run params
-section = 'vae'
-run_id = '0004'
-data_name = 'watches'
-RUN_FOLDER = 'run/{}/'.format(section)
-RUN_FOLDER += '_'.join([run_id, data_name])
-IMAGE_FOLDER = '../data/train/processed_images/'
+from datetime import datetime 
 
 
+def vae_predict(n_predictions):
+    ''' 
+    Makes "n" predictions of new watch images. 
+    Returns image array of size (n,128,128,3).'''
+    INPUT_DIM = (128,128,3)
+    # - - - SAME ARCHITECTURE USED IN TRAINING 
+    vae = VariationalAutoencoder( 
+                    input_dim = INPUT_DIM
+                    , encoder_conv_filters=[32,64,64,64,128,128]
+                    , encoder_conv_kernel_size=[3,3,3,3,3, 3]
+                    , encoder_conv_strides=[2,2,2,2,2, 2]
+                    , decoder_conv_t_filters=[64,64,32,3,3, 3]
+                    , decoder_conv_t_kernel_size=[3,3,3,3, 3, 3]
+                    , decoder_conv_t_strides=[2,2,2,2, 2, 2]
+                    , z_dim=200
+                    , use_batch_norm=True
+                    , use_dropout=True)
 
-INPUT_DIM = (128,128,3)
+    vae.load_weights('run/vae/0004_watches/weights/weights.h5')
+    znew = np.random.normal(size = (n_predictions,vae.z_dim))
+    reconst = vae.decoder.predict(np.array(znew))
+    return reconst
 
 
 
-#imageLoader = ImageLabelLoader(IMAGE_FOLDER, INPUT_DIM[:2])
 
 
-vae = VariationalAutoencoder(
-                input_dim = INPUT_DIM
-                , encoder_conv_filters=[32,64,64,64,128,128]
-                , encoder_conv_kernel_size=[3,3,3,3,3, 3]
-                , encoder_conv_strides=[2,2,2,2,2, 2]
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--n_predictions', '-n', help='number of predictions to make', type=int)
+    parser.add_argument('--save', '-s', help='save the image to the image_results directory',default=True)
+    args = parser.parse_args()
+    print('args: ', args)
 
-                , decoder_conv_t_filters=[64,64,32,3,3, 3]
-                , decoder_conv_t_kernel_size=[3,3,3,3, 3, 3]
-                , decoder_conv_t_strides=[2,2,2,2, 2, 2]
-                , z_dim=200
-                , use_batch_norm=True
-                , use_dropout=True)
+    vae_result = vae_predict(args.n_predictions)
+    fig = plt.figure()
+    plt.axis('off')
+    plt.imshow(vae_result[0])
+    if args.save:
+        num_existing = str(len(os.listdir('../image_results/')))
+        name = '../image_results/VAE_prediction_'+num_existing+'.png'
+        fig.savefig(name, dpi=125)
 
-vae.load_weights('run/vae/0004_watches/weights/weights.h5')  
 
 
-# vae = load_model(VariationalAutoencoder, RUN_FOLDER)
-
-n_to_show = 30
-
-znew = np.random.normal(size = (n_to_show,vae.z_dim))
-
-reconst = vae.decoder.predict(np.array(znew))
-
-fig = plt.figure(figsize=(18, 5))
-fig.subplots_adjust(hspace=0.4, wspace=0.4)
-for i in range(n_to_show):
-    ax = fig.add_subplot(3, 10, i+1)
-    ax.imshow(reconst[i, :,:,:])
-    ax.axis('off')
-
-name=run_id+'_watches'
-fig.savefig(name, dpi=125)
