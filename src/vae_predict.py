@@ -7,7 +7,19 @@ import pandas as pd
 import argparse 
 from vae.VAE_MODEL import VariationalAutoencoder
 from utils.loaders import load_model, ImageLabelLoader
+<<<<<<< HEAD
 from datetime import datetime 
+=======
+
+# run params
+section = 'vae'
+run_id = '0003'
+data_name = 'watches'
+RUN_FOLDER = 'run/{}/'.format(section)
+RUN_FOLDER += '_'.join([run_id, data_name])
+IMAGE_FOLDER = '../data/train/processed_images/'
+
+>>>>>>> 2ac4a047b38ef3dc7afd6a9e6b29aad1f156043d
 
 
 def vae_predict(n_predictions):
@@ -36,6 +48,23 @@ def vae_predict(n_predictions):
 
 
 
+<<<<<<< HEAD
+=======
+#vae = load_model(VariationalAutoencoder, RUN_FOLDER)
+vae = VariationalAutoencoder(
+                input_dim = INPUT_DIM
+                , encoder_conv_filters=[32,64,64, 64]
+                , encoder_conv_kernel_size=[3,3,3,3]
+                , encoder_conv_strides=[2,2,2,2]
+
+                , decoder_conv_t_filters=[64,64,32,3]
+                , decoder_conv_t_kernel_size=[3,3,3,3]
+                , decoder_conv_t_strides=[2,2,2,2]
+                , z_dim=200
+                , use_batch_norm=True
+                , use_dropout=True)
+
+>>>>>>> 2ac4a047b38ef3dc7afd6a9e6b29aad1f156043d
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -55,3 +84,8 @@ if __name__ == "__main__":
 
 
 
+<<<<<<< HEAD
+=======
+name = 'predictions-' + run_id+'-watches.png'
+fig.savefig(name, dpi=125)
+>>>>>>> 2ac4a047b38ef3dc7afd6a9e6b29aad1f156043d
