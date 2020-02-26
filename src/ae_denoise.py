@@ -150,3 +150,5 @@ def load_ae_denoise(model_name, weights_name= None):
         return tf.keras.models.load_model('run/ae/'+str(model_name))
 
 
+if __name__ == "__main__":
+    create_denoise_ae(image_depth=3000,epochs=200)
