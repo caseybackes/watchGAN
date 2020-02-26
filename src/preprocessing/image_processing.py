@@ -5,10 +5,12 @@ import matplotlib.pyplot as plt
 from PIL import Image, ImageOps
 import os
 
+
+
+
 def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
     desired_size = SIZE
-    im_pth = FILEPATH#"/home/jdhao/test.jpg"
-
+    im_pth = FILEPATH
     im = Image.open(im_pth)
     old_size = im.size  # old_size[0] is in (width, height) format
 
@@ -27,6 +29,7 @@ def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
     padding = (delta_w//2, delta_h//2, delta_w-(delta_w//2), delta_h-(delta_h//2))
     try:
         new_im = ImageOps.expand(im, padding, fill=(255,255,255))
+
     except TypeError as te:
         print(te)
         return None 
@@ -39,6 +42,7 @@ def im_resize(FILEPATH,SIZE,show=False,make_copy=False):
         FILEPATH = '../../data/train/processed_images/'+os.path.basename(FILEPATH)
 
         new_im.save(FILEPATH)
+
     return new_im
 
 if __name__ == "__main__":    

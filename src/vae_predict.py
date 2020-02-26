@@ -1,13 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from PIL import Image
 import numpy as np
 import os
 from scipy.stats import norm
 import pandas as pd
 import argparse 
 from vae.VAE_MODEL import VariationalAutoencoder
-from utils.loaders import load_model, ImageLabelLoader
-
+from skimage.color import rgb2hsv
+# REFERENCES: 
+# https://blog.keras.io/building-autoencoders-in-keras.html
 
 def vae_predict(n_predictions):
     ''' 
@@ -30,6 +32,7 @@ def vae_predict(n_predictions):
     vae.load_weights('run/vae/0004_watches/weights/weights.h5')
     znew = np.random.normal(size = (n_predictions,vae.z_dim))
     reconst = vae.decoder.predict(np.array(znew))
+
     return reconst
 
 
@@ -45,11 +48,17 @@ if __name__ == "__main__":
     print('args: ', args)
 
     vae_result = vae_predict(args.n_predictions)
+    vae_result_num = vae_result.shape[0]
     fig = plt.figure()
     plt.axis('off')
     plt.imshow(vae_result[0])
     if args.save:
-        num_existing = str(len(os.listdir('../image_results/')))
-        name = '../image_results/VAE_prediction_'+num_existing+'.png'
-        fig.savefig(name, dpi=125)
+        # num_existing = str(len(os.listdir('../image_results/')))
+        # name = '../image_results/VAE_prediction_'+num_existing+'.png'
+        for img in range(vae_result_num):
+            num_existing = str(len(os.listdir('../image_results/')))
+            name = '../image_results/VAE_prediction_'+num_existing+'.png'
+            img_i = vae_result[img]
+
+        #fig.savefig(name, dpi=125)
 
