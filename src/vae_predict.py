@@ -11,10 +11,11 @@ from skimage.color import rgb2hsv
 # REFERENCES: 
 # https://blog.keras.io/building-autoencoders-in-keras.html
 
-def vae_predict(n_predictions):
+def vae_predict(n_predictions, model_id=4):
     ''' 
     Makes "n" predictions of new watch images. 
-    Returns image array of size (n,128,128,3).'''
+    Returns images as numpy array of size (n,128,128,3).'''
+
     INPUT_DIM = (128,128,3)
     # - - - SAME ARCHITECTURE USED IN TRAINING 
     vae = VariationalAutoencoder( 
@@ -29,25 +30,25 @@ def vae_predict(n_predictions):
                     , use_batch_norm=True
                     , use_dropout=True)
 
-    vae.load_weights('run/vae/0004_watches/weights/weights.h5')
+    model_id_clean = str('0000'+str(model_id))[-4:]
+    model_file_path = 'run/vae/'+model_id_clean+'_watches/weights/weights.h5'
+    # vae.load_weights('run/vae/0004_watches/weights/weights.h5')
+    vae.load_weights(model_file_path)
     znew = np.random.normal(size = (n_predictions,vae.z_dim))
-    reconst = vae.decoder.predict(np.array(znew))
+    prediction = vae.decoder.predict(np.array(znew))
 
-    return reconst
-
-
-
-
+    return prediction
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--n_predictions', '-n', help='number of predictions to make', type=int)
+    parser.add_argument('--model_id', '-m', help='pretrained model id to use for predictions', type=int)
     parser.add_argument('--save', '-s', help='save the image to the image_results directory',default=True)
     args = parser.parse_args()
     print('args: ', args)
 
-    vae_result = vae_predict(args.n_predictions)
+    vae_result = vae_predict(args.n_predictions, args.model_id)
     vae_result_num = vae_result.shape[0]
     fig = plt.figure()
     plt.axis('off')
@@ -60,5 +61,5 @@ if __name__ == "__main__":
             name = '../image_results/VAE_prediction_'+num_existing+'.png'
             img_i = vae_result[img]
 
-        #fig.savefig(name, dpi=125)
+        fig.savefig(name, dpi=125)
 

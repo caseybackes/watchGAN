@@ -11,7 +11,8 @@ from keras.preprocessing.image import ImageDataGenerator
 def vae_train(image_depth=1000
             , keep_model=False
             , epochs=10
-            , mode = 'build'):
+            , mode = 'build'
+            , r_loss_factor = 10000):
 
     DATA_FOLDER = '../data/train' #contains the class dir of 'processed_images'
 
@@ -79,7 +80,7 @@ def vae_train(image_depth=1000
 
     # Train the model
     LEARNING_RATE = 0.0005
-    R_LOSS_FACTOR = 10000
+    R_LOSS_FACTOR = r_loss_factor#10000
     EPOCHS = epochs 
     PRINT_EVERY_N_BATCHES = 10
     INITIAL_EPOCH = 0
@@ -112,6 +113,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train a variational autoencoder model.')
     parser.add_argument('--imdepth','-d', type=int, help='number of images to train model on',default=None)
     parser.add_argument('--epochs','-e', type = int,help='number of epochs for training',required=True)
+    parser.add_argument('--rls','-r', type = int,help='r loss factor for vae model,defaults to 10,000',default=10000)
     parser.add_argument('--save','-s', action='store_true', dest='save', help='opt to save the model')
     parser.add_argument('--mode','-m', type=str, help='build or load', default='build')
     args = parser.parse_args()
@@ -124,4 +126,5 @@ if __name__ == "__main__":
     vae_train(image_depth=args.imdepth
             , keep_model=args.save
             , epochs=args.epochs
-            , mode = args.mode)
+            , mode = args.mode
+            , r_loss_factor=args.rls)
