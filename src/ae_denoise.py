@@ -4,7 +4,7 @@ import argparse
 from skimage import io
 from skimage import filters as skfilters
 import numpy as np
-# from tensorflow import keras
+import random
 import keras
 from  keras.layers import Activation, Dense, Input
 from  keras.layers import Conv2D, Flatten
@@ -14,34 +14,50 @@ from  keras import backend as K
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
-def create_denoise_ae(image_depth = 1000, epochs=300):
-    # - - - DATA COLLECTION AND PREPROCESSING
+def create_denoise_ae(image_depth, epochs):
+    # Data collection and preprocessing
     DATA_FOLDER = '../data/train/processed_images/' #contains the class dir of 'processed_images'
 
+    if image_depth == None:
+        image_depth = -1
 
-    # - - - MAKE NOISY IMAGES
-    data_clean = []
-    data_noisy =[]
-    
-    for f in os.listdir(DATA_FOLDER)[0:image_depth]:
+    X = []
+    y = []
+
+    all_images =os.listdir(DATA_FOLDER)
+
+    # shuffle the list of images
+    random.shuffle(all_images)
+
+    # blur each image and accumulate clean and blurry
+    for f in all_images[0:image_depth]:
+        
+        # handle the inapproproate files
+        if '.DS_Store' in f:
+            continue 
+
         fpath = os.path.join(DATA_FOLDER,f)
         img = io.imread(fpath)
+
+        # normalize images to a max value of 1
         img = img/255.
-        data_clean.append(img)
-        # UNIFORM RANDOM NOISE - PROVED TO BE INEFFECTIVE AND LIKELY INAPROPRIATE. 
-        # noise = np.random.normal(loc=0.5, scale=0.5, size=img.shape)
-        # img_noisy = img + noise
-        # img_noisy = np.clip(img_noisy, 0., 1.) # all must be within [0,1] inclusive
+
+        # keep original clean image in y
+        y.append(img)
+
+        # keep blurred image in X
         img_noisy = skfilters.gaussian(img, sigma=3, multichannel=True)  
 
-        data_noisy.append(img_noisy)
-    # Test/train split for AE validation
-    # train_depth = int(image_depth * 0.8)
-    # test_depth = image_depth-train_depth
-    # x_train_noisy, x_test_noisy = np.array(data_noisy[0:train_depth]), np.array(data_noisy[test_depth:-1])
-    # x_train, x_test = np.array(data_clean[0:train_depth]), np.array(data_clean[test_depth:-1])
-    # print('Training on ',train_depth, ' images. Testing on ', test_depth, ' images. ')
-    x_train, x_test, y_train, y_test = train_test_split(data_noisy, data_clean, test_size=0.33, random_state=42)
+        X.append(img_noisy)
+
+    x_train, x_test, y_train, y_test = train_test_split(X, y, shuffle=True,test_size=0.1, random_state=42)
+
+
+    # convert to numpy arrays
+    x_train = np.array(x_train)
+    y_train = np.array(y_train)
+    x_test = np.array(x_test)
+    y_test = np.array(y_test)
 
     # - - - NETWORK PARAMETERS
     image_size = x_train[0].shape[0]
@@ -50,7 +66,7 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
     kernel_size = 3
     latent_dim = 16 # our coding
     # Encoder/Decoder number of CNN layers and filters per layer
-    # layer_filters = [16, 32]
+    # layer_filters = [16, 32] #<- worked previously :) 
     layer_filters = [16,32,64,128]
 
     # - - - BUILD THE AUTOENCODER
@@ -111,6 +127,7 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
     autoencoder = Model(inputs, decoder(encoder(inputs)), name='autoencoder')
     autoencoder.summary()
 
+    # Compile and fit the Autoencoder Model
     autoencoder.compile(loss='mse', optimizer='adam')
     print('Fitting data to autoencoder...')
     autoencoder.fit(x_train,
@@ -119,13 +136,10 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
                     epochs=epochs,
                     batch_size=batch_size,
                     verbose=True,
-                    shuffle=True,)
+                    shuffle=True,
+                    use_multiprocessing=True,)
 
-    # - - - SERIALIZE MODEL TO JSON
-    print('Saving model...')
-    model_to_json = autoencoder.to_json()
-
-    # save new iterations of AE model
+    # Serialize the model
     how_many = sum(['ae_model' in x for x in os.listdir('run/ae')])+1
     name = 'run/ae/unblur_model'+str(how_many)+'.h5'
     autoencoder.save(name)
@@ -161,9 +175,13 @@ if __name__ == "__main__":
 
     # ARGPARSE FOR HYPERPERAMETERS
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--imdepth','-d', type=int, help='number of images to train model on', required=True)
+    parser.add_argument('--imdepth','-d', type=int, help='number of images to train model on',default=None)
     parser.add_argument('--epochs','-e', type = int,help='number of epochs for training',required=True)
     args = parser.parse_args()
 
-    # GENERATE NEW AE MODEL 
+    # The case of using all images to train autoencoder
+    if not args.imdepth:
+        args.imdepth=-1
+
+    # Generate the deblurr model  
     create_denoise_ae(image_depth=args.imdepth,epochs=args.epochs)
