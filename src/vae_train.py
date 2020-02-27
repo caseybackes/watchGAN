@@ -86,6 +86,7 @@ def vae_train(image_depth=1000
     INITIAL_EPOCH = 0
 
     vae.compile(LEARNING_RATE, R_LOSS_FACTOR)
+    print('*'*20,'\nTRAINING THE VAE MODEL NOW...')
 
     vae.train_with_generator(     
         data_flow
