@@ -138,10 +138,9 @@ def create_denoise_ae(image_depth, epochs, keep_model=False):
                     use_multiprocessing=True,)
 
     # Serialize the model
-    breakpoint()
     if keep_model:
         how_many = sum(['unblur_model' in x for x in os.listdir('run/ae')])+1
-        name = 'run/ae/unblur_model'+str(how_many)+'.h5'
+        name = 'run/ae/unblur_model'+str(how_many+1)+'.h5'
         autoencoder.save(name)
         print("Saved autoencoder model under ", name)
     return autoencoder
@@ -183,7 +182,7 @@ if __name__ == "__main__":
     # The case of using all images to train autoencoder
     if not args.imdepth:
         args.imdepth=-1
-    breakpoint()
+    # breakpoint()
     # Generate the deblurr model  
     create_denoise_ae(image_depth=args.imdepth
                     ,epochs=args.epochs
