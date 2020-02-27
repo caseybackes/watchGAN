@@ -1,5 +1,6 @@
 # from autoencoder import Autoencoder
 import os
+import argparse
 from skimage import io, filters
 import numpy as np
 # from tensorflow import keras
@@ -89,7 +90,6 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
                             activation='relu',
                             padding='same')(x)
 
-
     x = Conv2DTranspose(filters=3,
                         kernel_size=kernel_size,
                         padding='same')(x)
@@ -115,12 +115,9 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
     # - - - SERIALIZE MODEL TO JSON
     print('Saving model...')
     model_to_json = autoencoder.to_json()
-    # save successive iterations of denoising AE.
+
+    # save new iterations of AE model
     how_many = sum(['ae_model' in x for x in os.listdir('run/ae')])+1
-    # name = 'run/ae/ae_model-'+str(how_many)+'.json'
-    # with open(name, "w") as json_file:
-    #     json_file.write(model_to_json)
-    # autoencoder.save_weights(str("run/ae/ae_weights-"+str(how_many)+".h5"))
     name = 'run/ae/ae_model-'+str(how_many)+'.h5'
     autoencoder.save(name)
     print("Saved autoencoder model under ", name)
@@ -152,4 +149,12 @@ def load_ae_denoise(model_name, weights_name= None):
 
 
 if __name__ == "__main__":
-    create_denoise_ae(image_depth=100,epochs=5)
+
+    # ARGPARSE FOR HYPERPERAMETERS
+    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser.add_argument('--imdepth','-d', type=int, help='number of images to train model on', required=True)
+    parser.add_argument('--epochs','-e', type = int, help='number of epochs for training',required=True)
+    args = parser.parse_args()
+
+    # GENERATE NEW AE MODEL 
+    create_denoise_ae(image_depth=args.imdepth,epochs=args.epochs)
