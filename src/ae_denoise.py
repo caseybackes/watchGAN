@@ -32,7 +32,7 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
         # noise = np.random.normal(loc=0.5, scale=0.5, size=img.shape)
         # img_noisy = img + noise
         # img_noisy = np.clip(img_noisy, 0., 1.) # all must be within [0,1] inclusive
-        img_noisy = skfilters.gaussian(img, sigma=3)  
+        img_noisy = skfilters.gaussian(img, sigma=3, multichannel=True)  
 
         data_noisy.append(img_noisy)
     # Test/train split for AE validation
@@ -118,7 +118,8 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
                     validation_data=(x_test_noisy, x_test),
                     epochs=epochs,
                     batch_size=batch_size,
-                    verbose=True)
+                    verbose=True,
+                    shuffle=True,)
 
     # - - - SERIALIZE MODEL TO JSON
     print('Saving model...')
@@ -126,7 +127,7 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
 
     # save new iterations of AE model
     how_many = sum(['ae_model' in x for x in os.listdir('run/ae')])+1
-    name = 'run/ae/ae_model-'+str(how_many)+'.h5'
+    name = 'run/ae/unblur_model'+str(how_many)+'.h5'
     autoencoder.save(name)
     print("Saved autoencoder model under ", name)
     return autoencoder
