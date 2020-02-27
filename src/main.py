@@ -19,7 +19,7 @@ class Watch():
     ''' Instantiate with Watch()'''
     def __init__(self,n_predictions=10):
         self.predictions = self.make_predictions(n=n_predictions)
-        self.denoise_model = self.make_denoise_model('new_a3_model-3.h5')
+        self.denoise_model = self.make_denoise_model('unblur_model3.h5')
         self.denoised_predictions = self.denoise_model.predict(self.predictions) 
         self.prediction_shape = np.array(self.predictions[0].shape)
 
@@ -54,3 +54,4 @@ class Watch():
 
 w = Watch(20)
 w.display()
+plt.show()
