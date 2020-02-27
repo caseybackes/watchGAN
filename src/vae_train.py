@@ -70,7 +70,7 @@ def vae_train(image_depth=1000
     
     # Save the model architecture
     if mode == 'build':
-        vae.save('../data/savedmodels/')
+        # vae.save('../data/savedmodels/')
         vae.save('run/vae/'+str(run_id + '_watches'))
     else:
         vae.load_weights(os.path.join(RUN_FOLDER, 'weights/weights.h5'))
@@ -97,9 +97,9 @@ def vae_train(image_depth=1000
     )
 
     if keep_model:
-        breakpoint()
-        how_many = sum(['vae_model' in x for x in os.listdir('run/vae')])+1
-        name = 'run/ae/vae_model'+str(how_many+1)+'.h5'
+        how_many = sum(['vae' in x for x in os.listdir('run/vae')])+1
+        # name = 'run/vae/vae_model'+str(how_many+1)+'.h5'
+        name= RUN_FOLDER + '/vae.h5'
         vae.save(name)
         print("Saved autoencoder model under ", name)
     

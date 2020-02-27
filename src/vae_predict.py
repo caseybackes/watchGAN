@@ -31,6 +31,8 @@ def vae_predict(n_predictions, model_id=4):
                     , use_dropout=True)
 
     model_id_clean = str('0000'+str(model_id))[-4:]
+    # model_name = model_id_clean+'_watches/'
+    # vae = tf.keras.models.load_model('run/vae/'+str(model_name))
     model_file_path = 'run/vae/'+model_id_clean+'_watches/weights/weights.h5'
     # vae.load_weights('run/vae/0004_watches/weights/weights.h5')
     vae.load_weights(model_file_path)

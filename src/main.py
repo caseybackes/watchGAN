@@ -15,20 +15,27 @@ from  keras import backend as K
 import tensorflow as tf
 import matplotlib.pyplot as plt 
 
+# TODO: RETRAIN VAE MODEL ON CLEANED DATASET
+
+
 class Watch():
     ''' Instantiate with Watch()'''
-    def __init__(self,n_predictions=10):
-        self.predictions = self.make_predictions(n=n_predictions)
-        self.denoise_model = self.make_denoise_model('unblur_model3.h5')
+    def __init__(self,n_predictions=10,unblur_model_id=4, vae_model_id=4):
+        self.n_predictions = n_predictions
+        self.vae_model_id=vae_model_id
+        self.unblur_model_id=unblur_model_id 
+        self.predictions = self.make_predictions(n=self.n_predictions,)
+        # latest and greatest deblur
+        self.ublur_model = self.make_unblur_model('unblur_model'+str(unblur_model_id)+'.h5')
         self.denoised_predictions = self.denoise_model.predict(self.predictions) 
         self.prediction_shape = np.array(self.predictions[0].shape)
 
-    def make_predictions(self,n=10):
+    def make_predictions(self,n=10, model_id = vae_model_id):
         print('Makeing new images...')
         return vae_predict(n)
 
-    def make_denoise_model(self,model_name):
-        print('Loading the denoising autoencoder...')
+    def make_unblur_model(self,model_name):
+        print('Loading the unblur autoencoder...')
         try:
             lad = load_ae_denoise(model_name)
             return lad 

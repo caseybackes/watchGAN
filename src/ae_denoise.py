@@ -13,6 +13,9 @@ from  keras.models import Model, load_model
 from  keras import backend as K
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
+# REFERENCES: 
+# https://scikit-image.org/docs/dev/api/skimage.filters.html#skimage.filters.gaussian
+
 
 def create_denoise_ae(image_depth, epochs, keep_model=False):
     # Data collection and preprocessing
