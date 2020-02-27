@@ -35,7 +35,7 @@ def create_denoise_ae(image_depth, epochs, keep_model=False):
 
     # blur each image and accumulate clean and blurry
     for f in all_images[0:image_depth]:
-        if f == '.DS_STORE':
+        if f == '.DS_STORE' or '.jpg' not in f:
             continue
         fpath = os.path.join(DATA_FOLDER,f)
         img = io.imread(fpath)
