@@ -153,7 +153,7 @@ if __name__ == "__main__":
     # ARGPARSE FOR HYPERPERAMETERS
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--imdepth','-d', type=int, help='number of images to train model on', required=True)
-    parser.add_argument('--epochs','-e', type = int, help='number of epochs for training',required=True)
+    parser.add_argument('--epochs','-e', type = int,help='number of epochs for training',required=True)
     args = parser.parse_args()
 
     # GENERATE NEW AE MODEL 

@@ -44,7 +44,7 @@ class Watch():
 
         r,c,d = [int(x) for x in np.array(self.prediction_shape)*np.array([1,.5,1])]
         whitespace = np.ones(shape=(r,c,d))
-        fig = plt.figure(figsize=(10,4))
+        fig = plt.figure(figsize=(15,10))
         for i in range(n_to_show):
             ax = fig.add_subplot(rows, cols, i+1)
             side_by_side = np.concatenate( (self.predictions[i],whitespace,self.denoised_predictions[i]) , axis = 1)
