@@ -11,7 +11,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 # ITERATION PARAMETERS
 section = 'vae'
-run_id = '0006'
+run_id = '0007'
 data_name = 'watches'
 RUN_FOLDER = 'run/{}/'.format(section)
 RUN_FOLDER += '_'.join([run_id, data_name])
@@ -53,8 +53,7 @@ data_flow = data_gen.flow_from_directory(DATA_FOLDER
                                          , shuffle = True
                                          , classes=None
                                          , class_mode = 'input'
-                                         , subset = "training"
-                                            )
+                                         , subset = "training")
 
 
 
@@ -82,7 +81,7 @@ else:
 
 LEARNING_RATE = 0.0005
 R_LOSS_FACTOR = 10000
-EPOCHS = 1000
+EPOCHS = 400
 PRINT_EVERY_N_BATCHES = 10
 INITIAL_EPOCH = 0
 
