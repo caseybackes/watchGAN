@@ -41,7 +41,7 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
 
     x_train_noisy, x_test_noisy = np.array(data_noisy[0:train_depth]), np.array(data_noisy[test_depth:-1])
     x_train, x_test = np.array(data_clean[0:train_depth]), np.array(data_clean[test_depth:-1])
-
+    print('Training on ',train_depth, ' images. Testing on ', test_depth, ' images. ')
     # - - - NETWORK PARAMETERS
     image_size = x_train[0].shape[0]
     input_shape = (image_size, image_size, 3)
