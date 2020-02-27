@@ -13,6 +13,7 @@ from  keras.layers import Reshape, Conv2DTranspose
 from  keras.models import Model, load_model
 from  keras import backend as K
 import tensorflow as tf
+import matplotlib.pyplot as plt 
 
 class Watch():
     ''' Instantiate with Watch()'''
@@ -20,6 +21,7 @@ class Watch():
         self.predictions = self.make_predictions(n=n_predictions)
         self.denoise_model = self.make_denoise_model('ae.h5')
         self.denoised_predictions = self.denoise_model.predict(self.predictions) 
+        self.prediction_shape = np.array(self.predictions[0].shape)
 
     def make_predictions(self,n=10):
         print('Makeing new images...')
@@ -35,22 +37,19 @@ class Watch():
             lad = load_ae_denoise('ae.h5')
             return lad
 
-    def __repr__(self):
-        return "<Watch: has_predictions:("('T' if self.predictions else "F")+ ");been_denoised:("+('T' if self.denoised_predictions else 'F')+ ">"
+    def display(self):
+        rows = 5
+        cols = 5
+        n_to_show = self.predictions.shape[0]
 
-    # # MAKE A PREDICTIO FROM THE DECODER OF THE VAE. 
-    # print('getting predictions')
-    # result = vae_predict(10)
+        r,c,d = [int(x) for x in np.array(self.prediction_shape)*np.array([1,.5,1])]
+        whitespace = np.ones(shape=(r,c,d))
+        fig = plt.figure(figsize=(10,4))
+        for i in range(n_to_show):
+            ax = fig.add_subplot(rows, cols, i+1)
+            side_by_side = np.concatenate( (self.predictions[i],whitespace,self.denoised_predictions[i]) , axis = 1)
+            ax.imshow(side_by_side)
+            ax.axis('off')
 
-    # # DENOISE THE PREDICTION
-    # print('Reviving the denoising autoencoder...')
-    # # breakpoint()
-    # denoising_ae = load_ae_denoise('ae.h5') 
-
-    # print('"denoising" predictions')
-    # processed_predictions = denoising_ae.predict(result)
-
-    # for i in range(len(processed_predictions)):
-    #     plt.imshow(processed_predictions[i])
-
-
+w = Watch(20)
+w.display()

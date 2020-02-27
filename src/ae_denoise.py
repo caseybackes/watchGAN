@@ -109,7 +109,7 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
     autoencoder.fit(x_train_noisy,
                     x_train,
                     validation_data=(x_test_noisy, x_test),
-                    epochs=100,
+                    epochs=epochs,
                     batch_size=batch_size)
 
     # - - - SERIALIZE MODEL TO JSON
@@ -122,7 +122,8 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
     #     json_file.write(model_to_json)
     # autoencoder.save_weights(str("run/ae/ae_weights-"+str(how_many)+".h5"))
     name = 'run/ae/ae_model-'+str(how_many)+'.h5'
-    autoencoder.save('run/vae/'+name)
+    autoencoder.save(name)
+    print("Saved autoencoder model under ", name)
     return autoencoder
     
 
@@ -151,4 +152,4 @@ def load_ae_denoise(model_name, weights_name= None):
 
 
 if __name__ == "__main__":
-    create_denoise_ae(image_depth=3000,epochs=200)
+    create_denoise_ae(image_depth=100,epochs=5)
