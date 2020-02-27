@@ -14,7 +14,7 @@ from  keras import backend as K
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
-def create_denoise_ae(image_depth, epochs):
+def create_denoise_ae(image_depth, epochs, keep_model=False):
     # Data collection and preprocessing
     DATA_FOLDER = '../data/train/processed_images/' #contains the class dir of 'processed_images'
 
@@ -25,16 +25,16 @@ def create_denoise_ae(image_depth, epochs):
     y = []
 
     all_images =os.listdir(DATA_FOLDER)
+    
+    # remove inappropriate file from list of images
+    if '.DS_STORE' in all_images:
+        all_images.remove('.DS_STORE')
 
     # shuffle the list of images
     random.shuffle(all_images)
 
     # blur each image and accumulate clean and blurry
     for f in all_images[0:image_depth]:
-        
-        # handle the inapproproate files
-        if '.DS_Store' in f:
-            continue 
 
         fpath = os.path.join(DATA_FOLDER,f)
         img = io.imread(fpath)
@@ -47,13 +47,11 @@ def create_denoise_ae(image_depth, epochs):
 
         # keep blurred image in X
         img_noisy = skfilters.gaussian(img, sigma=3, multichannel=True)  
-
         X.append(img_noisy)
 
     x_train, x_test, y_train, y_test = train_test_split(X, y, shuffle=True,test_size=0.1, random_state=42)
 
-
-    # convert to numpy arrays
+    # convert to numpy arrays for autoencoder
     x_train = np.array(x_train)
     y_train = np.array(y_train)
     x_test = np.array(x_test)
@@ -140,10 +138,12 @@ def create_denoise_ae(image_depth, epochs):
                     use_multiprocessing=True,)
 
     # Serialize the model
-    how_many = sum(['ae_model' in x for x in os.listdir('run/ae')])+1
-    name = 'run/ae/unblur_model'+str(how_many)+'.h5'
-    autoencoder.save(name)
-    print("Saved autoencoder model under ", name)
+    breakpoint()
+    if keep_model:
+        how_many = sum(['unblur_model' in x for x in os.listdir('run/ae')])+1
+        name = 'run/ae/unblur_model'+str(how_many)+'.h5'
+        autoencoder.save(name)
+        print("Saved autoencoder model under ", name)
     return autoencoder
     
 
@@ -177,11 +177,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--imdepth','-d', type=int, help='number of images to train model on',default=None)
     parser.add_argument('--epochs','-e', type = int,help='number of epochs for training',required=True)
+    parser.add_argument('--save','-s', action='store_true', dest='save', help='opt to save the model')
     args = parser.parse_args()
 
     # The case of using all images to train autoencoder
     if not args.imdepth:
         args.imdepth=-1
-
+    breakpoint()
     # Generate the deblurr model  
-    create_denoise_ae(image_depth=args.imdepth,epochs=args.epochs)
+    create_denoise_ae(image_depth=args.imdepth
+                    ,epochs=args.epochs
+                    ,keep_model=args.save)
