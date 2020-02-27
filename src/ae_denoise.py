@@ -12,7 +12,7 @@ from  keras.layers import Reshape, Conv2DTranspose
 from  keras.models import Model, load_model
 from  keras import backend as K
 import tensorflow as tf
-
+from sklearn.model_selection import train_test_split
 
 def create_denoise_ae(image_depth = 1000, epochs=300):
     # - - - DATA COLLECTION AND PREPROCESSING
@@ -36,12 +36,12 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
 
         data_noisy.append(img_noisy)
     # Test/train split for AE validation
-    train_depth = int(image_depth * 0.8)
-    test_depth = image_depth-train_depth
-
-    x_train_noisy, x_test_noisy = np.array(data_noisy[0:train_depth]), np.array(data_noisy[test_depth:-1])
-    x_train, x_test = np.array(data_clean[0:train_depth]), np.array(data_clean[test_depth:-1])
-    print('Training on ',train_depth, ' images. Testing on ', test_depth, ' images. ')
+    # train_depth = int(image_depth * 0.8)
+    # test_depth = image_depth-train_depth
+    # x_train_noisy, x_test_noisy = np.array(data_noisy[0:train_depth]), np.array(data_noisy[test_depth:-1])
+    # x_train, x_test = np.array(data_clean[0:train_depth]), np.array(data_clean[test_depth:-1])
+    # print('Training on ',train_depth, ' images. Testing on ', test_depth, ' images. ')
+    x_train, x_test, y_train, y_test = train_test_split(data_noisy, data_clean, test_size=0.33, random_state=42)
 
     # - - - NETWORK PARAMETERS
     image_size = x_train[0].shape[0]
@@ -113,9 +113,9 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
 
     autoencoder.compile(loss='mse', optimizer='adam')
     print('Fitting data to autoencoder...')
-    autoencoder.fit(x_train_noisy,
-                    x_train,
-                    validation_data=(x_test_noisy, x_test),
+    autoencoder.fit(x_train,
+                    y_train,
+                    validation_data=(x_test, y_test),
                     epochs=epochs,
                     batch_size=batch_size,
                     verbose=True,
