@@ -19,7 +19,7 @@ class Watch():
     ''' Instantiate with Watch()'''
     def __init__(self,n_predictions=10):
         self.predictions = self.make_predictions(n=n_predictions)
-        self.denoise_model = self.make_denoise_model('ae.h5')
+        self.denoise_model = self.make_denoise_model('new_a3_model-3.h5')
         self.denoised_predictions = self.denoise_model.predict(self.predictions) 
         self.prediction_shape = np.array(self.predictions[0].shape)
 
@@ -50,6 +50,7 @@ class Watch():
             side_by_side = np.concatenate( (self.predictions[i],whitespace,self.denoised_predictions[i]) , axis = 1)
             ax.imshow(side_by_side)
             ax.axis('off')
+        plt.tight_layout(pad=1)
 
 w = Watch(20)
 w.display()

@@ -1,7 +1,8 @@
 # from autoencoder import Autoencoder
 import os
 import argparse
-from skimage import io, filters
+from skimage import io
+from skimage import filters as skfilters
 import numpy as np
 # from tensorflow import keras
 import keras
@@ -17,17 +18,22 @@ def create_denoise_ae(image_depth = 1000, epochs=300):
     # - - - DATA COLLECTION AND PREPROCESSING
     DATA_FOLDER = '../data/train/processed_images/' #contains the class dir of 'processed_images'
 
+
+    # - - - MAKE NOISY IMAGES
     data_clean = []
     data_noisy =[]
-
+    
     for f in os.listdir(DATA_FOLDER)[0:image_depth]:
         fpath = os.path.join(DATA_FOLDER,f)
         img = io.imread(fpath)
         img = img/255.
         data_clean.append(img)
-        noise = np.random.normal(loc=0.5, scale=0.5, size=img.shape)
-        img_noisy = img + noise
-        img_noisy = np.clip(img_noisy, 0., 1.) # all must be within [0,1] inclusive
+        # UNIFORM RANDOM NOISE - PROVED TO BE INEFFECTIVE AND LIKELY INAPROPRIATE. 
+        # noise = np.random.normal(loc=0.5, scale=0.5, size=img.shape)
+        # img_noisy = img + noise
+        # img_noisy = np.clip(img_noisy, 0., 1.) # all must be within [0,1] inclusive
+        img_noisy = skfilters.gaussian(img, sigma=3)  
+
         data_noisy.append(img_noisy)
     # Test/train split for AE validation
     train_depth = int(image_depth * 0.8)
