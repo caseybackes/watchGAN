@@ -144,7 +144,7 @@ def create_denoise_ae(image_depth, epochs, keep_model=False):
     # Serialize the model
     if keep_model:
         how_many = sum(['unblur_model' in x for x in os.listdir('run/ae')])+1
-        name = 'run/ae/unblur_model'+str(how_many+1)+'.h5'
+        name = 'run/ae/unblur_model'+str(how_many+1)+'.h5' # oddly, another plus one is needed for this to work as intended. 
         autoencoder.save(name)
         print("Saved autoencoder model under ", name)
     return autoencoder
@@ -153,11 +153,9 @@ def create_denoise_ae(image_depth, epochs, keep_model=False):
 def load_ae_denoise(model_name, weights_name= None):
     '''
     model_name : (str) 
-        Example: 'ae_model-1.json'
+        Example: 'unblur_model4.h5'
         These files are located in "run/ae/"
-    weights_name : (str) 
-        Example: 'ae_weights-1.h5'
-        These files are located in "run/ae/"
+
     '''
     if '.json' in model_name and weights_name == None:
         print("A json model has no weights with it. Use the associated weights file or just the .h5 file.")
@@ -172,6 +170,12 @@ def load_ae_denoise(model_name, weights_name= None):
         return loaded_model
     else:
         return tf.keras.models.load_model('run/ae/'+str(model_name))
+
+def load_unblur_model(model_name):
+    if type(model_name) ==  int:
+        # get the clean model name from '4' to 'unblur_model4.h5'
+        model_name = 'unblur_model'+str(model_name)+'.h5'
+    return tf.keras.models.load_model('run/ae/'+model_name)
 
 
 if __name__ == "__main__":
