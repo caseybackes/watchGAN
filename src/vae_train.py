@@ -14,14 +14,15 @@ def vae_train(image_depth=1000
             , mode = 'build'
             , r_loss_factor = 10000):
 
-    DATA_FOLDER = '../data/train' #contains the class dir of 'processed_images'
+    # DATA_FOLDER = '../data/train' #contains the class dir of 'processed_images'
+    DATA_FOLDER = '../data/images/size256' #contains the class dir of 'processed_images'
 
     # ITERATION PARAMETERS
     section = 'vae'
     how_many_runs = len(os.listdir('run/vae'))
     # run_id = '0006'
     run_id = str('0000000'+str(how_many_runs))[-4:]
-    data_name = 'watches'
+    data_name = 'watches256'
     RUN_FOLDER = 'run/{}/'.format(section)
     RUN_FOLDER += '_'.join([run_id, data_name])
 
@@ -35,7 +36,7 @@ def vae_train(image_depth=1000
     # mode =  'build' #'load' #
 
 
-    INPUT_DIM = (128,128,3)
+    INPUT_DIM = (256,256,3)
     BATCH_SIZE = 32
 
     # Get image file names and shuffle
@@ -71,7 +72,7 @@ def vae_train(image_depth=1000
     # Save the model architecture
     if mode == 'build':
         # vae.save('../data/savedmodels/')
-        vae.save('run/vae/'+str(run_id + '_watches'))
+        vae.save('run/vae/'+str(run_id + '_watches256'))
     else:
         vae.load_weights(os.path.join(RUN_FOLDER, 'weights/weights.h5'))
 
