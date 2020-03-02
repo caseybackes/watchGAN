@@ -81,6 +81,7 @@ class Watch():
         
         # TODO: GET LATENT VECTOR AND RESHAPE INTO IMAGE ARRAY
         latent_vector = np.random.normal(size = (self.n_predictions,self.vae_model.z_dim))
+        self.latent_vector = latent_vector 
         
         aspect_ratio = np.array([1,1.5])
         figsize= aspect_ratio*plotscale
@@ -133,7 +134,7 @@ if __name__ == "__main__":
 
 
     # TESTING DOUBLE DEBLUR
-    # ...basically it sucks. 
+    # ...basically it sucks. Dont use it. 
     
     # fig = plt.figure()
     # plt.suptitle("Single Unblur")
