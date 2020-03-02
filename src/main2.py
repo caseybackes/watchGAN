@@ -130,17 +130,22 @@ if __name__ == "__main__":
     # w.display(n_images=4, plotscale=8)
     # plt.show()
 
-    fig = plt.figure()
-    plt.suptitle("Single Unblur")
 
-    for i in range(len(w.unblurred_predictions)):
-        ax = fig.add_subplot(2,2,i+1)
-        ax.imshow(w.unblurred_predictions[i])
 
-    fig = plt.figure()
-    plt.suptitle("Double Unblur")
-    dbl_unblur = w.unblur_model.predict(w.unblurred_predictions)
+    # TESTING DOUBLE DEBLUR
+    # ...basically it sucks. 
+    
+    # fig = plt.figure()
+    # plt.suptitle("Single Unblur")
 
-    for i in range(len(dbl_unblur)):
-        ax = fig.add_subplot(2,2,i+1)
-        ax.imshow(dbl_unblur[i])
+    # for i in range(len(w.unblurred_predictions)):
+    #     ax = fig.add_subplot(2,2,i+1)
+    #     ax.imshow(w.unblurred_predictions[i])
+
+    # fig = plt.figure()
+    # plt.suptitle("Double Unblur")
+    # dbl_unblur = w.unblur_model.predict(w.unblurred_predictions)
+
+    # for i in range(len(dbl_unblur)):
+    #     ax = fig.add_subplot(2,2,i+1)
+    #     ax.imshow(dbl_unblur[i])

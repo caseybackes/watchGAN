@@ -13,18 +13,19 @@ def show_learning(vae_model_id=16):
     # Get image file names from run folder
     img_list = os.listdir(run_folder)
     imgformat = 'img_{}_0.jpg'
-    plot_scale = 7
-    fig = plt.figure(figsize=(2.5*plot_scale,plot_scale),dpi=120)
+    plot_scale = 1.5
+    fig = plt.figure(figsize=(plot_scale*5, 8*plot_scale),dpi=120)
+    epoch_id_list = [int(x) for x in np.linspace(0,400,40)]
     for i in np.linspace(1,40,40):
         # format the image name to read/plot
-        epoch_id = str(int(i)).zfill(3) # '010'
+        epoch_id = str(int(i*10)).zfill(3) # '010'
         img_name = run_folder +  imgformat.format(epoch_id) # 'img_010_0.jpg'
 
         # retrieve image
         imgdata = io.imread(img_name)
         
         # make a new axis to plot this image on 
-        ax = fig.add_subplot(4, 10, i)  
+        ax = fig.add_subplot(5,8, i)  
         ax.axis('off')
         ax.text(x=.5,y=-.5,s=str(epoch_id))
         ax.imshow(imgdata)

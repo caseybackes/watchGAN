@@ -68,7 +68,7 @@ class Watch():
 
 
 
-    def display(self, n_images=4, plotscale=3, with_latent=False):
+    def display(self, n_images=4, plotscale=3):
         '''
         n_rows (int): number of rows to plot in prediction image
         m_cols (int): number of cols to plot in the prediction image
