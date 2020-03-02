@@ -8,7 +8,8 @@ from skimage import io
 def show_learning(vae_model_id=16):
     # Retrieve the first image prediction for every ten epochs of training
     run_dir = 'run/vae/0000'
-    run_folder = run_dir[0:-len(str(vae_model_id))]+str(vae_model_id)+'_watches/images/'  # 'run/vae/0016'  
+    run_folder = run_dir[0:-len(str(vae_model_id))] \
+                +str(vae_model_id)+'_watches/images/'  # [Out]>>> 'run/vae/0016'  
     
     # Get image file names from run folder
     img_list = os.listdir(run_folder)

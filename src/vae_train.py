@@ -8,12 +8,38 @@ from keras.preprocessing.image import ImageDataGenerator
 
 
 
-def vae_train(image_depth=1000
-            , keep_model=False
-            , epochs=10
-            , mode = 'build'
-            , r_loss_factor = 10000):
+def vae_train(image_depth=1000, keep_model=False, epochs=10, 
+            mode = 'build', r_loss_factor = 10000):
+    """Trains a variational autoencoder model. 
 
+    Parameters
+    ----------
+    image_depth : int
+        number of images to train on. defaults to 1000. 
+
+    keep_model : bool
+        if keeping the model set to True. Defaults to False.
+
+    epochs : int
+        number of training epochs. defaults to 10.
+    
+    mode : str
+        Build mode or load mode. Defaults to `build`. 
+
+    r_loss_factor: int
+        multiplicative factor for the reconstruction loss function during 
+        training. Keeping a balance between the `val_r_loss` and `val_kl_loss` 
+        will ensure a robust model that can reconstruct the images and also 
+        allow for a good range of variability in the images. Adjust this value 
+        if the `val_r_loss` and `val_kl_loss` are significantly out of 
+        absolute balance. Defaults to 10000. 
+
+
+    Returns
+    -------
+    Model
+        The fully trained variational autoencoder model. 
+    """
     DATA_FOLDER = '../data/train' #contains the class dir of 'processed_images'
 
     # ITERATION PARAMETERS
@@ -112,17 +138,18 @@ if __name__ == "__main__":
 
     # ARGPARSE FOR HYPERPERAMETERS
     parser = argparse.ArgumentParser(description='Train a variational autoencoder model.')
-    parser.add_argument('--imdepth','-d', type=int, help='number of images to train model on',default=None)
-    parser.add_argument('--epochs','-e', type = int,help='number of epochs for training',required=True)
-    parser.add_argument('--rls','-r', type = int,help='r loss factor for vae model,defaults to 10,000',default=10000)
-    parser.add_argument('--save','-s', action='store_true', dest='save', help='opt to save the model')
-    parser.add_argument('--mode','-m', type=str, help='build or load', default='build')
+    parser.add_argument('--imdepth','-d', type=int,default=100,
+                        help='number of images to train model on. Defaults to 100')
+    parser.add_argument('--epochs','-e', type = int, required=True,
+                        help='number of epochs for training')
+    parser.add_argument('--rls','-r', type = int,default=10000,
+                        help='r loss factor for vae model,defaults to 10,000')
+    parser.add_argument('--save','-s', action='store_true', dest='save', 
+                        help='opt flag to save the model')
+    parser.add_argument('--mode','-m', type=str, default='build',
+                        help='build a new model or load a prior one')
     args = parser.parse_args()
 
-    # The case of using all images to train VAE model
-    if not args.imdepth:
-        args.imdepth=-1
-    # breakpoint()
     # Generate the VAE model  
     vae_train(image_depth=args.imdepth
             , keep_model=args.save

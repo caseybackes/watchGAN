@@ -1,5 +1,7 @@
 
-from keras.layers import Input, Conv2D, Flatten, Dense, Conv2DTranspose, Reshape, Lambda, Activation, BatchNormalization, LeakyReLU, Dropout
+from keras.layers import Input, Conv2D, Flatten, Dense, \
+                         Conv2DTranspose, Reshape, Lambda, \
+                         Activation, BatchNormalization, LeakyReLU, Dropout
 from keras.models import Model
 from keras import backend as K
 from keras.optimizers import Adam
@@ -49,7 +51,7 @@ class Autoencoder():
 
     def _build(self):
 
-        ### THE ENCODER
+        # The Encoder
         encoder_input = Input(shape=self.input_dim, name='encoder_input')
 
         x = encoder_input
@@ -81,7 +83,7 @@ class Autoencoder():
         self.encoder = Model(encoder_input, encoder_output)
 
 
-        ### THE DECODER
+        # The Decoder
         decoder_input = Input(shape=(self.z_dim,), name='decoder_input')
 
         x = Dense(np.prod(shape_before_flattening))(decoder_input)
@@ -113,7 +115,7 @@ class Autoencoder():
 
         self.decoder = Model(decoder_input, decoder_output)
 
-        ### THE FULL AUTOENCODER
+        # Full Autoencoder
         model_input = encoder_input
         model_output = self.decoder(encoder_output)
 
@@ -131,13 +133,14 @@ class Autoencoder():
         self.model.compile(optimizer=optimizer, loss = r_loss)
 
     def save(self, folder):
-
+        # If this is a new run create a directory for it
         if not os.path.exists(folder):
             os.makedirs(folder)
             os.makedirs(os.path.join(folder, 'viz'))
             os.makedirs(os.path.join(folder, 'weights'))
             os.makedirs(os.path.join(folder, 'images'))
 
+        # Write the parameters to file. 
         with open(os.path.join(folder, 'params.pkl'), 'wb') as f:
             pickle.dump([
                 self.input_dim
@@ -155,18 +158,20 @@ class Autoencoder():
         self.plot_model(folder)
 
         
-
-
     def load_weights(self, filepath):
         self.model.load_weights(filepath)
 
     
-    def train(self, x_train, batch_size, epochs, run_folder, print_every_n_batches = 100, initial_epoch = 0, lr_decay = 1):
+    def train(self, x_train, batch_size, epochs, run_folder, 
+                print_every_n_batches = 100, initial_epoch = 0, lr_decay = 1):
 
-        custom_callback = CustomCallback(run_folder, print_every_n_batches, initial_epoch, self)
-        lr_sched = step_decay_schedule(initial_lr=self.learning_rate, decay_factor=lr_decay, step_size=1)
+        custom_callback = CustomCallback(run_folder, print_every_n_batches, 
+                                            initial_epoch, self)
+        lr_sched = step_decay_schedule(initial_lr=self.learning_rate, 
+                                        decay_factor=lr_decay, step_size=1)
 
-        checkpoint2 = ModelCheckpoint(os.path.join(run_folder, 'weights/weights.h5'), save_weights_only = True, verbose=1)
+        checkpoint2 = ModelCheckpoint(os.path.join(run_folder, 'weights/weights.h5'),
+                                     save_weights_only = True, verbose=1)
 
         callbacks_list = [checkpoint2, custom_callback, lr_sched]
 
@@ -181,8 +186,11 @@ class Autoencoder():
         )
 
     def plot_model(self, run_folder):
-        plot_model(self.model, to_file=os.path.join(run_folder ,'viz/model.png'), show_shapes = True, show_layer_names = True)
-        plot_model(self.encoder, to_file=os.path.join(run_folder ,'viz/encoder.png'), show_shapes = True, show_layer_names = True)
-        plot_model(self.decoder, to_file=os.path.join(run_folder ,'viz/decoder.png'), show_shapes = True, show_layer_names = True)
+        plot_model(self.model, to_file=os.path.join(run_folder ,'viz/model.png'), 
+                    show_shapes = True, show_layer_names = True)
+        plot_model(self.encoder, to_file=os.path.join(run_folder ,'viz/encoder.png'), 
+                    show_shapes = True, show_layer_names = True)
+        plot_model(self.decoder, to_file=os.path.join(run_folder ,'viz/decoder.png'), 
+                    show_shapes = True, show_layer_names = True)
 
 

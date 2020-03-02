@@ -17,7 +17,25 @@ from sklearn.model_selection import train_test_split
 # https://scikit-image.org/docs/dev/api/skimage.filters.html#skimage.filters.gaussian
 
 
-def create_denoise_ae(image_depth, epochs, keep_model=False):
+def create_denoise_ae(image_depth=None, epochs=20, keep_model=False):
+    """Generates new autoencoder model to trained to remove blur from images.
+
+    Parameters
+    ----------
+    image_depth : int
+        Number of images to train the model on, including train and test.
+
+    epochs : int
+        Number of epochs over which to train autoencoder model.
+
+    keep_model : bool
+        Flag to save the model or not. Default is `False`. 
+
+    Returns
+    -------
+    numpy.ndarray
+        An array of image arrays of shape (n,128,128,3) 
+    """
     # Data collection and preprocessing
     DATA_FOLDER = '../data/train/processed_images/' #contains the class dir of 'processed_images'
 
@@ -27,16 +45,18 @@ def create_denoise_ae(image_depth, epochs, keep_model=False):
     X = []
     y = []
 
-    all_images =os.listdir(DATA_FOLDER)
+    # Retrieve all image file names availale
+    all_images = os.listdir(DATA_FOLDER)
     
     # remove inappropriate file from list of images
     if '.DS_STORE' in all_images:
         all_images.remove('.DS_STORE')
 
-    # shuffle the list of images
+    # shuffle the list of images (inplace)
     random.shuffle(all_images)
 
-    # blur each image and accumulate clean and blurry
+    # Apply the distortion (gaussian blur) to each image, saving a clean copy
+    # and a distorted copy to X and y. 
     for f in all_images[0:image_depth]:
         if f == '.DS_STORE' or '.jpg' not in f:
             continue
@@ -49,13 +69,15 @@ def create_denoise_ae(image_depth, epochs, keep_model=False):
         # keep original clean image in y
         y.append(img)
 
-        # keep blurred image in X
+        # Apply distortion (gaussian blur) and append to X. 
+        # `multichannel=True` anticipates RGB (3 channel) images. 
         img_noisy = skfilters.gaussian(img, sigma=3, multichannel=True)  
         X.append(img_noisy)
 
+    # Split the images for train and test. 
     x_train, x_test, y_train, y_test = train_test_split(X, y, shuffle=True,test_size=0.1, random_state=42)
 
-    # convert to numpy arrays for autoencoder
+    # convert each set to numpy.ndarray type for autoencoder
     x_train = np.array(x_train)
     y_train = np.array(y_train)
     x_test = np.array(x_test)
@@ -141,7 +163,7 @@ def create_denoise_ae(image_depth, epochs, keep_model=False):
                     shuffle=True,
                     use_multiprocessing=True,)
 
-    # Serialize the model
+    # Serialize and return the model 
     if keep_model:
         how_many = sum(['unblur_model' in x for x in os.listdir('run/ae')])+1
         name = 'run/ae/unblur_model'+str(how_many+1)+'.h5' # oddly, another plus one is needed for this to work as intended. 
@@ -150,48 +172,40 @@ def create_denoise_ae(image_depth, epochs, keep_model=False):
     return autoencoder
     
 
-def load_ae_denoise(model_name, weights_name= None):
-    '''
-    model_name : (str) 
-        Example: 'unblur_model4.h5'
-        These files are located in "run/ae/"
-
-    '''
-    if '.json' in model_name and weights_name == None:
-        print("A json model has no weights with it. Use the associated weights file or just the .h5 file.")
-        return None 
-    if weights_name:
-        json_file = open('run/ae/'+model_name)
-        loaded_model_json = json_file.read()
-        json_file.close()
-        loaded_model = tf.keras.models.model_from_json(loaded_model_json)
-        # load weights into model 
-        loaded_model.load_weights('run/ae/'+str(weights_name))
-        return loaded_model
-    else:
-        return tf.keras.models.load_model('run/ae/'+str(model_name))
-
 def load_unblur_model(model_name):
+    """Loads the specified autoencoder model including weights. 
+
+    Parameters
+    ----------
+    model_name : str
+        Exact name of the unblur model to use. Example: "unblur_model4.h5"
+
+    Returns
+    -------
+    Model
+        Fully trained and loaded autoencoder model ready for Model.predict() 
+    """
     if type(model_name) ==  int:
         # get the clean model name from '4' to 'unblur_model4.h5'
         model_name = 'unblur_model'+str(model_name)+'.h5'
+
     return tf.keras.models.load_model('run/ae/'+model_name)
 
 
 if __name__ == "__main__":
 
     # ARGPARSE FOR HYPERPERAMETERS
-    parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--imdepth','-d', type=int, help='number of images to train model on',default=None)
-    parser.add_argument('--epochs','-e', type = int,help='number of epochs for training',required=True)
-    parser.add_argument('--save','-s', action='store_true', dest='save', help='opt to save the model')
+    parser = argparse.ArgumentParser(description='Train an unbluring autoencoder.')
+    parser.add_argument('--imdepth','-d', type=int, default=100,
+                        help='number of images to train model on. Default=100')
+    parser.add_argument('--epochs','-e', type = int, required=True,
+                        help='number of epochs for training')
+    parser.add_argument('--save','-s', action='store_true', dest='save', 
+                        help='include this opt flag to save the model')
     args = parser.parse_args()
 
-    # The case of using all images to train autoencoder
-    if not args.imdepth:
-        args.imdepth=-1
-    # breakpoint()
+
     # Generate the deblurr model  
-    create_denoise_ae(image_depth=args.imdepth
-                    ,epochs=args.epochs
-                    ,keep_model=args.save)
+    create_denoise_ae(image_depth=args.imdepth ,
+                      epochs=args.epochs ,
+                      keep_model=args.save)
