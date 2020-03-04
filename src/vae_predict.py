@@ -60,11 +60,12 @@ def load_vae_model(model_id=16):
     """
 
     # Clean the model_id from (int) to filepath
-    model_id_clean = str('0000'+str(model_id))[-4:]
+    model_id_clean = str('0000'+str(model_id))[-4:]+'_watches'
 
+    model_file_name = [x for x in os.listdir('run/vae') if model_id_clean in x][0]
     # Unpickle the parameters for the model
     params = pickle.load(
-            open('run/vae/'+model_id_clean+'_watches/params.pkl', 'rb'))
+            open('run/vae/'+model_file_name, 'rb'))
     
     # Initiate VAE model with new params
     vae = VariationalAutoencoder(                           # EXAMPLE:
